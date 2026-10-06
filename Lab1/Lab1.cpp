@@ -1,20 +1,104 @@
-// Lab1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
+using namespace std;
 
-int main()
+// Node structure for a Binary Search Tree
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+};
+
+// Function to create a new Node
+Node* createNode(int data)
 {
-    std::cout << "Hello World!\n";
+    Node* newNode = new Node();
+    newNode->data = data;
+    newNode->left = newNode->right = nullptr;
+    return newNode;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+// Function to insert a node in the BST
+Node* insertNode(Node* root, int data)
+{
+    if (root == nullptr) { // If the tree is empty, return a
+                           // new node
+        return createNode(data);
+    }
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    // Otherwise, recur down the tree
+    if (data < root->data) {
+        root->left = insertNode(root->left, data);
+    }
+    else if (data > root->data) {
+        root->right = insertNode(root->right, data);
+    }
+    else if(data == root->data) {
+        // If the data is equal to the root's data, insert it as greater value
+		root->right = insertNode(root->right, data);
+	}
+
+    // return the (unchanged) node pointer
+    return root;
+}
+
+// Function to do inorder traversal of BST
+int inorderTraversalSUM(Node* root,int x)
+{
+    static int sum = 0;
+    if (root != nullptr)
+    {
+        if (root->data <= x)
+            sum += root->data;
+        inorderTraversalSUM(root->right,x);
+    }
+}
+
+// Function to search a given key in a given BST
+Node* searchNode(Node* root, int key)
+{
+    // Base Cases: root is null or key is present at root
+    if (root == nullptr || root->data == key) {
+        return root;
+    }
+
+    // Key is greater than root's key
+    if (root->data < key) {
+        return searchNode(root->right, key);
+    }
+
+    // Key is smaller than root's key
+    return searchNode(root->left, key);
+}
+
+// Main function to demonstrate the operations of BST
+int main()
+{
+
+    Node* root = nullptr;
+    int t,n,q;
+    cin >> t;
+    while (t--)
+    {
+        int sum, suma;
+        cin >> n >> q;
+        sum = 0;
+        for (int i = 0; i < n; i++)
+        {
+            int x;
+            cin >> x;
+            x +=sum;
+            sum = x;
+            root = insertNode(root, x);
+		}
+        for (int i = 0; i < q; i++)
+        {
+            int x;
+            cin >> x;
+			suma = inorderTraversalSUM(root,x);
+            cout << suma << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
